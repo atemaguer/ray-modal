@@ -1,7 +1,7 @@
-
 import os
 import typer
 import click
+import inspect
 from typing import List, Optional
 from typing_extensions import Annotated
 import importlib.util
@@ -30,7 +30,7 @@ def run(executable_path: str, ctx: typer.Context):
     spec.loader.exec_module(module)
      
     func_caller = getattr(module, func_name)
-    stub = func_caller.stub
+    # stub = func_caller.stub
     
     if args:
         func_caller(**args)

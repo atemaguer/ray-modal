@@ -1,0 +1,12 @@
+setup.py
+src/modal/__init__.py
+src/modal/__main__.py
+src/modal/cli.py
+src/modal/image.py
+src/modal/stub.py
+src/modal/web_endpoint.py
+src/modal.egg-info/PKG-INFO
+src/modal.egg-info/SOURCES.txt
+src/modal.egg-info/dependency_links.txt
+src/modal.egg-info/entry_points.txt
+src/modal.egg-info/top_level.txt

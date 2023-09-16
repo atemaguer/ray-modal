@@ -19,7 +19,7 @@ class Stub:
             def __init__(self, func):
                 self.local = func
                 self.remote_func = ray.remote(func)
-                stub = self
+                self.stub = self
                 
             def local(self, *args, **kwargs):
                 return self.local(*args, **kwargs)
@@ -33,6 +33,7 @@ class Stub:
 
         def decorator(func):
             def wrapper(*args, **kwargs):
+                stub = self
                 func(*args, **kwargs)
             return wrapper
         
