@@ -1,23 +1,20 @@
-import uvicorn
 from enum import Enum
-from fastapi import FastAPI
 
-class HttpMethod(Enum, str):
+from modal.utils import WebEndpoint
+
+class HttpMethod(str, Enum):
     GET = "GET"
     POST = "POST"
     DELETE = "DELETE"
 
-app = FastAPI()
-
-def web_endpoint(method: str = "GET"):
-
+def web_endpoint(method: HttpMethod = "GET"):
+    
     def decorator(func):
-        if method == HttpMethod.POST:
-            app.post("/")(func)
-        else:
-            app.get("/")(func)
+
+        def handler(*args, **kwargs):
+            return func(*args, **kwargs)
         
-        return app
+        return WebEndpoint(handler)
     
     return decorator
 
