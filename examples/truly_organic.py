@@ -17,7 +17,6 @@ import time
 
 origins = ["http://localhost:3000"]
 
-
 environment = jinja2.Environment()
 
 MODEL_NAME = "TheBloke/chronos-hermes-13B-GPTQ"

@@ -1,5 +1,6 @@
 import os
 import importlib.util
+from enum import Enum
 
 cwd = os.getcwd()
 
@@ -22,3 +23,8 @@ def load_module(filename):
 class WebEndpoint:
     def __init__(self, handler) -> None:
         self.handler = handler
+
+class HTTPMethod(str, Enum):
+    GET = "GET"
+    POST = "POST"
+    DELETE = "DELETE"

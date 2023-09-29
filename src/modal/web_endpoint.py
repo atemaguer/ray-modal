@@ -1,18 +1,19 @@
-from enum import Enum
+from modal.utils import WebEndpoint, HTTPMethod
+from fastapi import FastAPI
 
-from modal.utils import WebEndpoint
+def web_endpoint(method: HTTPMethod = "GET"):
+    app = FastAPI() 
 
-class HttpMethod(str, Enum):
-    GET = "GET"
-    POST = "POST"
-    DELETE = "DELETE"
-
-def web_endpoint(method: HttpMethod = "GET"):
-    
     def decorator(func):
+        if method == HTTPMethod.GET:
+            app.get("/")(func)
+        elif method == HTTPMethod.POST:
+            app.post("/")(func)
+        else:
+            app.delete("/")(func)
 
         def handler(*args, **kwargs):
-            return func(*args, **kwargs)
+            return app(*args, **kwargs)
         
         return WebEndpoint(handler)
     

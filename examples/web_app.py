@@ -4,5 +4,5 @@ stub = Stub()
 
 @stub.function()
 @web_endpoint()
-def f():
-    return "Hello world!"
+def square(x: int):
+    return x**2
