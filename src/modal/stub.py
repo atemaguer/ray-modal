@@ -46,7 +46,7 @@ class Stub:
                 
                 if isinstance(func, WebEndpoint):
                     #self.remote_func = ray.remote(func.handler)
-                    stub.web_endpoints.append(func.handler)
+                    stub.web_endpoints.append(func)
                 else:
                     self.remote_func = ray.remote(func)
                     stub.functions.append(self.remote_func)

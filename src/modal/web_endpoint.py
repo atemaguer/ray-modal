@@ -15,7 +15,7 @@ def web_endpoint(method: HTTPMethod = "GET"):
         def handler(*args, **kwargs):
             return app(*args, **kwargs)
         
-        return WebEndpoint(handler)
+        return WebEndpoint(path=f'{func.__name__}', handler=handler)
     
     return decorator
 

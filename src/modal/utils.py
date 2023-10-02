@@ -21,8 +21,9 @@ def load_module(filename):
 
 
 class WebEndpoint:
-    def __init__(self, handler) -> None:
+    def __init__(self, path, handler):
         self.handler = handler
+        self.path = path
 
 class HTTPMethod(str, Enum):
     GET = "GET"

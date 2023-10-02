@@ -1,4 +1,5 @@
 from imp import reload
+from os import path
 import typer
 import click
 import uvicorn
@@ -23,16 +24,15 @@ def run(executable_path: str, ctx: typer.Context):
     module = load_module(filename)
      
     func_caller = getattr(module, func_name)
-    # stub = func_caller.stub
     
     if args:
         func_caller(**args)
     else:
         func_caller()
 
-def _start_proxy(handlers):
+def _start_proxy(app_name, endpoints):
     proxy = HTTPProxy()
-    proxy.register_endpoint("index", handlers[0])
+    proxy.register_endpoints(app_name, endpoints)
     
     uvicorn.run(proxy, host="0.0.0.0", port=8000)
 
@@ -40,10 +40,11 @@ def _start_proxy(handlers):
 def serve(executable_path: str):
     module = load_module(executable_path)
     stub = getattr(module, "stub")
+    app_name = stub.app_name
 
     endpoints = stub.registered_webendpoints
 
-    _start_proxy(endpoints)
+    _start_proxy(app_name, endpoints)
 
 
 @click.command()
