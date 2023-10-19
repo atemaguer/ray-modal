@@ -1,6 +1,10 @@
+from re import I
 import ray
 import logging
-import inspect
+from ray.runtime_env import RuntimeEnv
+
+from modal.image import Image
+
 
 
 from modal.utils import WebEndpoint
@@ -8,9 +12,21 @@ from modal.utils import WebEndpoint
 logger = logging.getLogger("ray")
 
 class Stub:
-    def __init__(self, name: str = None) -> None:
+    def __init__(self, name: str, image: Image = None) -> None:
+        self.image = image
+
         if not ray.is_initialized():
-            ray.init(address="auto")
+            if image:
+                image.build()
+
+                runtime_env = RuntimeEnv(
+                    container={"image": image.image_name,
+                    "worker_path": "/root/python/ray/_private/workers/default_worker.py",
+                    "run_options": ["--cap-drop SYS_ADMIN","--log-level=debug"]}
+                    ) 
+                ray.init(address="auto", runtime_env=runtime_env)
+            else:
+                ray.init(address="auto")
 
         self.app_name = "default"
 

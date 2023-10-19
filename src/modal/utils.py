@@ -19,7 +19,6 @@ def load_module(filename):
 
     return module
 
-
 class WebEndpoint:
     def __init__(self, path, handler):
         self.handler = handler

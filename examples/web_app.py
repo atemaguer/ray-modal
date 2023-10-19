@@ -1,9 +1,12 @@
 import time
 from fastapi.responses import StreamingResponse
 
-from modal import Stub, web_endpoint
+from modal import Stub, Image, web_endpoint
 
-stub = Stub()
+# image = Image.debian_slim()
+
+# stub = Stub(name="test-web-app", image=image)
+stub = Stub(name="test-web-app")
 
 def fake_video_streamer():
     for i in range(10):

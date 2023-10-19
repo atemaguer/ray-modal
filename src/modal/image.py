@@ -1,6 +1,15 @@
 import sys
+import tempfile
+import docker
+from typing import Any, List
+from dataclasses import dataclass
+
+from ray.runtime_env import RuntimeEnv
 
 class InvalidError(Exception):
+    pass
+
+def _build_container():
     pass
 
 def _validate_python_version(version: str) -> None:
@@ -33,32 +42,56 @@ def _dockerhub_python_version(python_version=None):
         "3.8": "15",
         "3.7": "15",
     }
+
     major_minor_version = ".".join(python_version.split(".")[:2])
     python_version = major_minor_version + "." + latest_micro_version[major_minor_version]
 
     return python_version
 
+@dataclass
 class Image:
-    def __init__(self) -> None:
-        self.dockerfile_commands = []
+    
+    dockerfile_commands: List[Any]
+    image_name = "default"
 
-    def debian_slim(self):
-        python_version = _dockerhub_python_version(python_version)
+    @classmethod
+    def debian_slim(cls):
+        # python_version = _dockerhub_python_version(python_version)
 
-        self.dockerfile_commands = [
-            f"FROM python:{python_version}-slim-bullseye",
-            "COPY /modal_requirements.txt /modal_requirements.txt",
+        dockerfile_commands = [
+            f"FROM anyscale/ray-ml:nightly-py38-gpu",
             "RUN apt-get update",
             "RUN apt-get install -y gcc gfortran build-essential",
             "RUN pip install --upgrade pip",
-            "RUN pip install -r /modal_requirements.txt",
             # Set debian front-end to non-interactive to avoid users getting stuck with input
             # prompts.
             "RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections",
         ]
 
+        return cls(dockerfile_commands=dockerfile_commands)
+
+    def build(self, image_name: str = None):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            file_path = f"{temp_dir}/Dockerfile"
+
+            dockerfile = "\n".join(self.dockerfile_commands)
+
+            with open(file_path, "w") as file:
+                file.write(dockerfile)
+
+            client = docker.from_env()
+            
+            tag = image_name
+
+            if not tag:
+                tag = self.image_name
+
+            image,  build_logs = client.images.build(path=temp_dir, tag=tag)
+
     def pip_install(self, *args):
-        pass
+        self.dockerfile_commands.extend(
+            args
+        )
 
     def app_install(self, *args):
         pass
